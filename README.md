@@ -1,6 +1,12 @@
 # Resonite で Youtube 動画が上手く再生できない理由（詳細編）
 
-前回の記事では対処法だけを書きました。ここではログを読んで分かった範囲で、なぜそうなるのかを書きます。
+前回の記事（[X](https://x.com/konto250/status/2089005526151803166)）では対処法だけを書きました。要点は以下です。
+
+- 常用していないブラウザで YouTube にログインし、Resonite の「設定 → ビデオストリーミングサービス → ブラウザの Cookie を使用」をそのブラウザに切り替える
+- Chromium 系（Chrome/Edge/Brave/Vivaldi）を指定した場合、Resonite 使用中はそのブラウザを完全に閉じる
+- ライブが見られなくなるので、ライブを見るときだけ「NONE」に戻す
+
+ここではログを読んで分かった範囲で、なぜそうなるのかを書きます。
 
 実測で確認したことと、推測にとどまることを区別して書きます。また以下は2026年8月中旬時点の観測です。yt-dlp も YouTube も頻繁に変わるので、そのうち成立しなくなります。
 
@@ -77,6 +83,8 @@ yt-dlp は YouTube にアクセスするとき、公式クライアントの種�
 | なし | visionos + android vr | `c=ANDROID_VR` |
 | ログイン済み | tv downgraded | `c=TVHTML5` |
 
+（`c=` は progressive の URL に付くものです。HLS のマニフェスト URL は別系統です）
+
 visionos と android vr はアカウント認証に対応していないため、Cookie を渡すと yt-dlp が候補から外します。明示的に指定しても外されます。
 
 ```
@@ -132,7 +140,7 @@ Loading video from: https://rr1---sn-...googlevideo.com/videoplayback?...
 （Audio tracks: が出ない。エラーもタイムアウトも記録されない）
 ```
 
-タイトルは yt-dlp が返すメタデータから取得しているので表示されます。その先の実データ取得で 403 を受けている状態です。
+タイトルは yt-dlp が返すメタデータから取得しているので表示されます。その先の実データ取得が失敗している状態です。Resonite のログには理由が残らないので、同じコマンドラインを手元で実行して確認したところ、403 が返っていました（5章）。
 
 自分の環境がどちらか確認するには、Resonite のインストールフォルダ内の `Logs` から最新のログを開き、`Best Format:` と `Audio tracks:` を検索してください。
 
@@ -167,7 +175,7 @@ PermissionError: [Errno 13] Permission denied:
 
 Firefox は `cookies.sqlite` を平文で持ち、排他ロックしないため、開いたままでも読めます。
 
-念のため書いておくと、これは Firefox の方が安全という話ではありません。Chrome は 127 以降 yt-dlp のような外部ツールで読めなくなりました。外部ツールからは Firefox の方が扱いやすいということ話です。
+念のため書いておくと、これは Firefox の方が安全という話ではありません。Chrome は 127 以降、Cookie の復号鍵をブラウザ自身に紐づける仕組みを導入しており、外部ツールから読めない場合があります。ここでいう「扱いやすい」は、外部ツールから読めるかどうかという意味だけです。
 
 ---
 
@@ -192,7 +200,7 @@ Firefox は `cookies.sqlite` を平文で持ち、排他ロックしないため
 
 - Windows 11 Pro (26200)
 - Resonite `2026.8.12.1196`（RESO Launcher 環境、ResoniteModLoader 導入済み）
-- 同梱 yt-dlp `nightly@2026.08.04.234419`、同梱 deno `2.9.2`
+- 同梱 yt-dlp `nightly@2026.08.04.234419`
 - 検証日：2026年8月9日〜17日
 
 Resonite は起動時に同梱の yt-dlp を自動更新します（ログに `Updating yt-dlp` と出ます）。バージョンを固定する手段はありません。
