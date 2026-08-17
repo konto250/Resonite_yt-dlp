@@ -1,6 +1,6 @@
 # Resonite で Youtube 動画が上手く再生できない理由（詳細編）
 
-前回の記事（[X](https://x.com/konto250/status/2089005526151803166)）では対処法だけを書きました。要点は以下です。
+前回の記事（(./README.md)）では対処法だけを書きました。要点は以下です。
 
 - 常用していないブラウザで YouTube にログインし、Resonite の「設定 → ビデオストリーミングサービス → ブラウザの Cookie を使用」をそのブラウザに切り替える
 - Chromium 系（Chrome/Edge/Brave/Vivaldi）を指定した場合、Resonite 使用中はそのブラウザを完全に閉じる
